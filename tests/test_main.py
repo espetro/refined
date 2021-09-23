@@ -3,6 +3,7 @@ from unittest import TestCase
 from typing import Annotated, TypeGuard
 
 from pyrefined.main import RefinementTypeException, refined
+from pyrefined.predicates import NonEmpty
 
 
 class TestMain(TestCase):
@@ -24,11 +25,8 @@ class TestMain(TestCase):
         hello("peter")
 
     def test_refine_refined_method(self):
-        def non_empty_string(value: str) -> TypeGuard[str]:
-            return len(value.strip()) > 0
-
         @refined
-        def hello(name: Annotated[str, non_empty_string]) -> str:
+        def hello(name: Annotated[str, NonEmpty[str]]) -> str:
             return f"Hello {name}!"
 
         hello("peter")

@@ -3,6 +3,8 @@ from functools import wraps
 
 from typing import Dict, TypeVar, Any, Callable, get_type_hints, Annotated, TypeGuard, Tuple
 
+from pyrefined.predicates import RefinementType
+
 # Type variable to annotate decorators that take a function,
 # and return a function with the same signature.
 F = TypeVar("F", bound=Callable[..., Any])
@@ -84,28 +86,30 @@ def _is_annotated_with_type(type_hint: _ANNOTATION_TYPE | Any,
             and type(argument) is type_hint.__args__[0])
 
 
-def _is_invalid_type_guard(type_guard: _TYPEGUARD_TYPE | Any,
+def _is_invalid_type_guard(type_guard: RefinementType | Any,
                            argument: _T) -> bool:
-    return not (_is_type_guard_callable_with_type(type_guard, argument) and
+    return not (_does_type_guard_inherit_from_base(type_guard, argument) and
                 _condition_holds(type_guard, argument))
 
 
-def _is_type_guard_callable_with_type(type_guard: _TYPEGUARD_TYPE | Any,
-                                      argument: _T) -> TypeGuard[_TYPEGUARD_TYPE]:
+def _does_type_guard_inherit_from_base(type_guard_class: RefinementType | Any,
+                                       argument: _T) -> TypeGuard[_TYPEGUARD_TYPE]:
     """
-    Check if a potential type guard is a function whose input is of type '_T' and its
-    return is of type 'TypeGuard'
+    Check if a potential type guard is class that inherits from the RefinementType base
+    class, and its generic type is '_T'
     """
-    if callable(type_guard):
-        parameter_types = get_type_hints(type_guard)
+    if hasattr(type_guard_class, "type_guard"):
+        parameter_types = get_type_hints(type_guard_class.type_guard)
         return_type = parameter_types.pop("return", None)
-        input_type = list(parameter_types.values())
+        input_types = list(parameter_types.values())
 
-        return type(return_type) is _TYPEGUARD_TYPE and len(input_type) == 1 and input_type[0] is type(argument)
-    else:
-        return False
+        if type(return_type) is _TYPEGUARD_TYPE and len(input_types) == 1 and hasattr(input_types[0], "__bound__"):
+            input_type = input_types[0].__bound__
+            return issubclass(type(argument), input_type)
+
+    return False
 
 
-def _condition_holds(type_guard: _TYPEGUARD_TYPE, argument: _T) -> bool:
+def _condition_holds(type_guard_class: RefinementType, argument: _T) -> TypeGuard[_T]:
     """Checks if the type guard condition holds"""
-    return type_guard(argument)
+    return type_guard_class.type_guard(argument)

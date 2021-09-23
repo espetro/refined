@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 from typing import Annotated, TypeGuard
 
@@ -35,5 +36,10 @@ class TestMain(TestCase):
         with self.assertRaises(RefinementTypeException) as e:
             hello("")
 
-        self.assertEqual("", str(e.exception))
+        expected_message_lines = [
+            "Conditions do not hold for the following parameters:",
+            "For parameter name with refined type <class 'str'>,  is not a valid value"
+        ]
+
+        self.assertEqual(expected_message_lines, [_.strip() for _ in str(e.exception).split(os.linesep)])
 

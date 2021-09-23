@@ -8,9 +8,10 @@ from typing import Dict, TypeVar, Any, Callable, get_type_hints, Annotated, Type
 F = TypeVar("F", bound=Callable[..., Any])
 _T = TypeVar("_T", bound=Any)
 
-_ANNOTATION_TYPE = type(Annotated[None, None])
+_ANNOTATION_TYPE = type(Annotated[None, Callable[[None], TypeGuard[None]]])
 _TYPEGUARD_TYPE = type(TypeGuard[None])
-_ERROR_TEMPLATE = "{} is not a valid value of type {}"
+
+_ERROR_TEMPLATE = "For parameter {} with refined type {}, {} is not a valid value"
 
 
 class RefinementTypeException(Exception):
@@ -45,30 +46,32 @@ def _check_refined_type_hints(type_hints: Dict[str, Any], args: Tuple[Any, ...],
     args_parameters = parameters_with_types[:num_args]
 
     for argument, (argument_parameter, type_hint) in zip(args, args_parameters):
-        if not _is_valid_type(type_hint, argument):
-            errors.append(_ERROR_TEMPLATE.format(argument_parameter, type_hint))
+        if _is_invalid_type(type_hint, argument):
+            refined_type = type_hint.__args__[0]
+            errors.append(_ERROR_TEMPLATE.format(argument_parameter, refined_type, argument))
 
     for parameter, type_hint in parameters_with_types[num_args:]:
-        if parameter in kwargs and not _is_valid_type(type_hint, kwargs[parameter]):
-            errors.append(_ERROR_TEMPLATE.format(parameter, type_hint))
+        if parameter in kwargs and _is_invalid_type(type_hint, kwargs[parameter]):
+            refined_type = type_hint.__args__[0]
+            errors.append(_ERROR_TEMPLATE.format(parameter, refined_type, kwargs[parameter]))
 
     if errors:
         raise RefinementTypeException(
             f"Conditions do not hold for the following parameters:" +
-            os.sep +
-            os.sep.join(errors)
+            os.linesep +
+            os.linesep.join(errors)
         )
 
 
-def _is_valid_type(type_hint: _ANNOTATION_TYPE | Any, argument: _T) -> bool:
-    """Checks if a type hint is a refined type"""
+def _is_invalid_type(type_hint: _ANNOTATION_TYPE | Any,
+                     argument: _T) -> TypeGuard[_ANNOTATION_TYPE]:
+    """Checks if a refined type hint is invalid (at least one type guard condition holds false)"""
     if _is_annotated_with_type(type_hint, argument):
         for type_guard in type_hint.__metadata__:
-            if not _is_type_guard_callable_with_type(type_guard, argument):
-                return False
-        return True
-    else:
-        return False
+            if _is_invalid_type_guard(type_guard, argument):
+                return True
+
+    return False
 
 
 def _is_annotated_with_type(type_hint: _ANNOTATION_TYPE | Any,
@@ -81,7 +84,14 @@ def _is_annotated_with_type(type_hint: _ANNOTATION_TYPE | Any,
             and type(argument) is type_hint.__args__[0])
 
 
-def _is_type_guard_callable_with_type(type_guard: Any, argument: _T) -> bool:
+def _is_invalid_type_guard(type_guard: _TYPEGUARD_TYPE | Any,
+                           argument: _T) -> bool:
+    return not (_is_type_guard_callable_with_type(type_guard, argument) and
+                _condition_holds(type_guard, argument))
+
+
+def _is_type_guard_callable_with_type(type_guard: _TYPEGUARD_TYPE | Any,
+                                      argument: _T) -> TypeGuard[_TYPEGUARD_TYPE]:
     """
     Check if a potential type guard is a function whose input is of type '_T' and its
     return is of type 'TypeGuard'
@@ -91,6 +101,11 @@ def _is_type_guard_callable_with_type(type_guard: Any, argument: _T) -> bool:
         return_type = parameter_types.pop("return", None)
         input_type = list(parameter_types.values())
 
-        return type(return_type) is _TYPEGUARD_TYPE and len(input_type) == 1 and type(input_type[0]) is type(argument)
+        return type(return_type) is _TYPEGUARD_TYPE and len(input_type) == 1 and input_type[0] is type(argument)
     else:
         return False
+
+
+def _condition_holds(type_guard: _TYPEGUARD_TYPE, argument: _T) -> bool:
+    """Checks if the type guard condition holds"""
+    return type_guard(argument)

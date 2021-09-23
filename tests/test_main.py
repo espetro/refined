@@ -2,8 +2,8 @@ import os
 from unittest import TestCase
 from typing import Annotated, TypeGuard
 
-from pyrefined.main import RefinementTypeException, refined
-from pyrefined.predicates import NonEmpty
+from refined.main import RefinementTypeException, refined
+from refined.predicates import NonEmpty
 
 
 class TestMain(TestCase):

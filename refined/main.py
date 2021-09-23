@@ -3,7 +3,7 @@ from functools import wraps
 
 from typing import Dict, TypeVar, Any, Callable, get_type_hints, Annotated, TypeGuard, Tuple
 
-from pyrefined.predicates import RefinementType
+from refined.predicates import RefinementType
 
 # Type variable to annotate decorators that take a function,
 # and return a function with the same signature.

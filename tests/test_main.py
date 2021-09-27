@@ -1,9 +1,9 @@
-import os
 from unittest import TestCase
-from typing import Annotated, TypeGuard
 
-from refined.main import RefinementTypeException, refined
-from refined.predicates import NonEmpty
+from refined import refined, RefinementTypeException
+from refined.refinement_types import NonEmpty
+
+from tests.utils import get_message_lines
 
 
 class TestMain(TestCase):
@@ -26,7 +26,7 @@ class TestMain(TestCase):
 
     def test_refine_refined_method(self):
         @refined
-        def hello(name: Annotated[str, NonEmpty[str]]) -> str:
+        def hello(name: NonEmpty[str]) -> str:
             return f"Hello {name}!"
 
         hello("peter")
@@ -39,5 +39,5 @@ class TestMain(TestCase):
             "For parameter name with refined type <class 'str'>,  is not a valid value"
         ]
 
-        self.assertEqual(expected_message_lines, [_.strip() for _ in str(e.exception).split(os.linesep)])
+        self.assertEqual(expected_message_lines, get_message_lines(str(e.exception)))
 

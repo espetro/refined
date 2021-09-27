@@ -1,44 +1,69 @@
 """Refined numeric types"""
 
 import math
-from typing import TypeGuard, Generic, TypeVar
+from typing import TypeGuard, Generic, TypeVar, Tuple, Any, Dict, get_args, Literal
 from numbers import Real
 
-from .base import RefinementType
+from .base import RefinementPredicate
 
 _R = TypeVar("_R", bound=Real)
+_0 = Literal[0]
+_2 = Literal[2]
 
 
-class Positive(Generic[_R], RefinementType):
-
-    @staticmethod
-    def type_guard(value: _R) -> TypeGuard[_R]:
-        return value > 0
-
-
-class Negative(Generic[_R], RefinementType):
+class Greater(Generic[_R], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _R) -> TypeGuard[_R]:
-        return value < 0
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        threshold = args[0]
+        threshold_value = get_args(threshold)[0]
+
+        return value > threshold_value
 
 
-class Even(Generic[_R], RefinementType):
-
-    @staticmethod
-    def type_guard(value: _R) -> TypeGuard[_R]:
-        return value % 2 == 0
-
-
-class Odd(Generic[_R], RefinementType):
+class Less(Generic[_R], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _R) -> TypeGuard[_R]:
-        return not Even.type_guard(value)
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        threshold = args[0]
+        threshold_value = get_args(threshold)[0]
+
+        return value < threshold_value
 
 
-class NonNan(Generic[_R], RefinementType):
+class Modulo(Generic[_R], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _R) -> TypeGuard[_R]:
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        divisor = args[0]
+        divisor_value = get_args(divisor)[0]
+
+        return value % divisor_value == 0
+
+
+class NonNan(Generic[_R], RefinementPredicate):
+
+    @staticmethod
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
         return math.isnan(value)
+
+
+class PositivePredicate(Generic[_R], RefinementPredicate):
+
+    @staticmethod
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        return Greater[_R].type_guard(value, _0)
+
+
+class NegativePredicate(Generic[_R], RefinementPredicate):
+
+    @staticmethod
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        return Less[_R].type_guard(value, _0)
+
+
+class Divisible(Generic[_R], RefinementPredicate):
+
+    @staticmethod
+    def type_guard(value: _R, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_R]:
+        return Modulo[_R].type_guard(value, _0)

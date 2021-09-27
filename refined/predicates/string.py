@@ -1,16 +1,16 @@
 """Refined string types"""
 
-from typing import TypeGuard, Generic, TypeVar
+from typing import TypeGuard, Generic, TypeVar, Tuple, Any, Dict
 
-from .base import RefinementType
+from .base import RefinementPredicate
 
-_T = TypeVar("_T", bound=str)
+_S = TypeVar("_S", bound=str)
 
 
-class ValidInt(Generic[_T], RefinementType):
+class ValidIntPredicate(Generic[_S], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _T) -> TypeGuard[_T]:
+    def type_guard(value: _S, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_S]:
         try:
             _ = int(value)
             return True
@@ -18,10 +18,10 @@ class ValidInt(Generic[_T], RefinementType):
             return False
 
 
-class ValidFloat(Generic[_T], RefinementType):
+class ValidFloatPredicate(Generic[_S], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _T) -> TypeGuard[_T]:
+    def type_guard(value: _S, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_S]:
         try:
             _ = float(value)
             return True

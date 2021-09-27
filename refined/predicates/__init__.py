@@ -1,4 +1,4 @@
-from .numeric import Positive, Negative, Even, Odd, NonNan
-from .collection import Empty, NonEmpty
-from .string import ValidInt, ValidFloat
-from .base import RefinementType
+from .base import RefinementPredicate, RefinementTypeException
+from .string import ValidIntPredicate, ValidFloatPredicate
+from .numeric import PositivePredicate, NegativePredicate
+from .collection import EmptyPredicate, NonEmptyPredicate

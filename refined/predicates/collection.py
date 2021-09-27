@@ -1,21 +1,21 @@
 """Refined collection types"""
 
-from typing import TypeGuard, Generic, TypeVar, Collection
+from typing import TypeGuard, Generic, TypeVar, Collection, Tuple, Any, Dict
 
-from .base import RefinementType
+from .base import RefinementPredicate
 
-_T = TypeVar("_T", bound=Collection)
+_C = TypeVar("_C", bound=Collection)
 
 
-class Empty(RefinementType, Generic[_T]):
+class EmptyPredicate(Generic[_C], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _T) -> TypeGuard[_T]:
+    def type_guard(value: _C, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_C]:
         return len(value) == 0
 
 
-class NonEmpty(RefinementType, Generic[_T]):
+class NonEmptyPredicate(Generic[_C], RefinementPredicate):
 
     @staticmethod
-    def type_guard(value: _T) -> TypeGuard[_T]:
-        return not Empty.type_guard(value)
+    def type_guard(value: _C, *args: Tuple[Any, ...], **kwargs: Dict[str, Any]) -> TypeGuard[_C]:
+        return not EmptyPredicate.type_guard(value)

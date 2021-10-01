@@ -7,6 +7,12 @@ from .base import RefinementPredicate
 _C = TypeVar("_C", bound=Collection)
 
 
+__all__ = [
+    'EmptyPredicate',
+    'NonEmptyPredicate'
+]
+
+
 class EmptyPredicate(Generic[_C], RefinementPredicate):
 
     @staticmethod

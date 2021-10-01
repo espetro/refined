@@ -4,16 +4,18 @@
 predicates. In short, you can ensure that the following script won't raise an `IndexError`:
 
 ```python
-from refined import refined, NonEmpty
-from typing import List
+from refined import refined, NonEmptyList
+from typing import Generator
 
 @refined
-def get_first_element(values: NonEmpty[List[int]]) -> int:
-    return values[0]
+def head_with_tail_generator(ls: NonEmptyList[int]) -> (int, Generator[int]):
+    return ls[0], (_ for _ in ls[1:])
 
 
 if __name__ == '__main__':
-    print(get_first_element([]))
+    head, tail = head_with_tail_generator([1, 2, 3])
+    print(head)
+    [print(_) for _ in tail]
 ```
 
 ## Help

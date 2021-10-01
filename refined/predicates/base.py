@@ -5,6 +5,9 @@ from typing import TypeVar, TypeGuard, Any, Tuple, Dict
 _T = TypeVar("_T")
 
 
+__all__ = ['RefinementPredicate', 'RefinementTypeException']
+
+
 class RefinementTypeException(Exception):
     pass
 

@@ -6,8 +6,38 @@ from refined.predicates import (
     ValidIntPredicate,
     ValidFloatPredicate,
     EmptyPredicate,
-    NonEmptyPredicate
+    NonEmptyPredicate,
+    TrimmedPredicate,
+    IPv4Predicate,
+    IPv6Predicate,
+    XmlPredicate,
+    CsvPredicate
 )
+
+__all__ = [
+    # numeric types
+    'Positive',
+    'Negative',
+
+    # string types
+    'TrimmedString',
+    'ValidIntString',
+    'ValidFloatString',
+    'XmlString',
+    'CsvString',
+    'IPv4String',
+    'IPv6String',
+
+    # generic collection types
+    'Empty',
+    'NonEmpty',
+
+    # concrete collection types
+    'NonEmptyString',
+    'NonEmptyList',
+    'NonEmptySet',
+    'NonEmptyDict',
+]
 
 _T1 = TypeVar("_T1")
 _T2 = TypeVar("_T2")
@@ -15,8 +45,13 @@ _T2 = TypeVar("_T2")
 Positive = Annotated[_T1, PositivePredicate[_T1]]
 Negative = Annotated[_T1, NegativePredicate[_T1]]
 
-ValidInt = Annotated[str, ValidIntPredicate[str]]
-ValidFloat = Annotated[str, ValidFloatPredicate[str]]
+TrimmedString = Annotated[str, TrimmedPredicate[str]]
+ValidIntString = Annotated[str, ValidIntPredicate[str]]
+ValidFloatString = Annotated[str, ValidFloatPredicate[str]]
+XmlString = Annotated[str, XmlPredicate[str]]
+CsvString = Annotated[str, CsvPredicate[str]]
+IPv4String = Annotated[str, IPv4Predicate[str]]
+IPv6String = Annotated[str, IPv6Predicate[str]]
 
 Empty = Annotated[_T1, EmptyPredicate[_T1]]
 NonEmpty = Annotated[_T1, NonEmptyPredicate[_T1]]

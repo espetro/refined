@@ -1,7 +1,8 @@
 import os
 from functools import wraps
 
-from typing import Dict, TypeVar, Any, Callable, Annotated, TypeGuard, Tuple
+from typing import Dict, Union, TypeVar, Any, Callable, Tuple
+from typing_extensions import Annotated, TypeGuard
 
 from refined.predicates import RefinementPredicate, RefinementTypeException
 
@@ -64,7 +65,7 @@ def _check_refined_type_hints(type_hints: Dict[str, Any], args: Tuple[Any, ...],
         raise RefinementTypeException(error_message + errors_as_str)
 
 
-def _is_invalid_type(argument: _T, type_hint: _ANNOTATION_TYPE | Any) -> TypeGuard[_ANNOTATION_TYPE]:
+def _is_invalid_type(argument: _T, type_hint: Union[_ANNOTATION_TYPE, Any]) -> TypeGuard[_ANNOTATION_TYPE]:
     """
     The type of an argument is invalid if the argument has a refinement type hint, and
     at least one type guard condition holds false. Predicates are evaluated in order
@@ -77,7 +78,7 @@ def _is_invalid_type(argument: _T, type_hint: _ANNOTATION_TYPE | Any) -> TypeGua
     return False
 
 
-def _is_annotated_with_type(argument: _T, type_hint: _ANNOTATION_TYPE | Any) -> TypeGuard[_ANNOTATION_TYPE]:
+def _is_annotated_with_type(argument: _T, type_hint: Union[_ANNOTATION_TYPE, Any]) -> TypeGuard[_ANNOTATION_TYPE]:
     """
     An argument is correctly annotated if it has an 'Annotated' type hint whose first
     argument is of type '_T'

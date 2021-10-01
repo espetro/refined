@@ -1,4 +1,5 @@
-from typing import Annotated, TypeVar, List, Set, Dict
+from typing_extensions import Annotated, TypeGuard
+from typing import TypeVar, List, Set, Dict
 
 from refined.predicates import (
     PositivePredicate,

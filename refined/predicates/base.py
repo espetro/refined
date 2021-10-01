@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from typing import TypeVar, TypeGuard, Any, Tuple, Dict
+from typing import TypeVar, Any, Tuple, Dict
+from typing_extensions import TypeGuard
 
 _T = TypeVar("_T")
 

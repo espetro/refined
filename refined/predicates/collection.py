@@ -1,6 +1,7 @@
 """Refined collection types"""
 
-from typing import TypeGuard, Generic, TypeVar, Collection, Tuple, Any, Dict
+from typing import Generic, TypeVar, Collection, Tuple, Any, Dict
+from typing_extensions import TypeGuard
 
 from .base import RefinementPredicate
 

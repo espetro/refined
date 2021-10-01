@@ -5,7 +5,8 @@ Note that most of the predicates defined `collection` also work for strings, by 
 them as a sequence of characters.
 """
 
-from typing import TypeGuard, Generic, TypeVar, Tuple, Any, Dict
+from typing import Generic, TypeVar, Tuple, Any, Dict
+from typing_extensions import TypeGuard
 from csv import reader as CsvReader
 from ipaddress import ip_address
 from xml.etree import ElementTree

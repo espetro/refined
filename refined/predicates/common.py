@@ -4,7 +4,8 @@ These predicates do not strictly fall into one of the other categories because t
 abstractions. For example, `ValueRangePredicate` applies for iterables of numeric type.
 """
 
-from typing import TypeGuard, Generic, TypeVar, Tuple, Any, Dict, Iterable
+from typing import Generic, TypeVar, Tuple, Any, Dict, Iterable
+from typing_extensions import TypeGuard
 from numbers import Real
 
 from .base import RefinementPredicate

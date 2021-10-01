@@ -1,7 +1,8 @@
 """Refined numeric types"""
 
 import math
-from typing import TypeGuard, Generic, TypeVar, Tuple, Any, Dict, get_args, Literal
+from typing import Generic, TypeVar, Tuple, Any, Dict
+from typing_extensions import TypeGuard, Literal, get_args
 from numbers import Real
 
 from .base import RefinementPredicate

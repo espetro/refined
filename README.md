@@ -1,4 +1,15 @@
-# refined: refinement type hints in Python
+<h1 align="center">
+    refined: refinement type hints in Python
+</h1>
+
+<p align="center">
+    <a href="https://github.com/espetro/refined/actions?query=workflow%3ATest+event%3Apush+branch%3Amaster" target="_blank">
+        <img src="https://github.com/espetro/refined/workflows/Test/badge.svg?event=push&branch=master" alt="Tests">
+    </a>
+    <a href="https://pypi.org/project/refined" target="_blank">
+        <img src="https://img.shields.io/pypi/v/refined?color=%2334D058&label=pypi%20package" alt="Package version">
+    </a>
+</p>
 
 `refined` is a Python 3 library that leverages the gradual type system in Python to constrain types by one or multiple
 predicates. In short, you can ensure that the following script won't raise an `IndexError`:

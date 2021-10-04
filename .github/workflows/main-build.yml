@@ -27,7 +27,7 @@ jobs:
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Enforce PEP8 style
       run: |
-        autopep8 --max-line-length 100 -ir refined tests
+        python -m autopep8 --max-line-length 100 -ir refined tests
     - name: Test with pytest
       run: |
         python -m pytest

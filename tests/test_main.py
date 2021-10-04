@@ -40,4 +40,3 @@ class TestMain(TestCase):
         ]
 
         self.assertEqual(expected_message_lines, get_message_lines(str(e.exception)))
-

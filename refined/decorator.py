@@ -8,7 +8,7 @@ from refined.predicates import RefinementPredicate, RefinementTypeException
 
 # Type variable to annotate decorators that take a function,
 # and return a function with the same signature.
-F = TypeVar("F", bound=Callable[..., Any])
+F = TypeVar("F", bound=Callable)
 _T = TypeVar("_T", bound=Any)
 
 _ANNOTATION_TYPE = type(Annotated[None, Callable[[None], TypeGuard[None]]])
@@ -72,8 +72,7 @@ def _is_invalid_type(argument: _T, type_hint: Union[_ANNOTATION_TYPE, Any]) -> T
     """
     if _is_annotated_with_type(argument, type_hint):
         for predicate in (_ for _ in type_hint.__metadata__ if _is_refinement_predicate(_)):
-            if _is_invalid_predicate(argument, predicate):
-                return True
+            return _is_invalid_predicate(argument, predicate)
 
     return False
 
